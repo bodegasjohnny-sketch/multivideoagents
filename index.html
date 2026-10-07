@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Johnny Bodegas · Video Production Engine — for Elva</title>
+<meta name="description" content="Johnny Bodegas built a working AI video engine: brief in, checked video out, with an approver instead of an editor. Proof, fit for Elva, and the version 3 plan.">
+<style>
+:root{--bg:#07080d;--p:#0f1119;--p2:#151827;--line:rgba(255,255,255,.08);--t:#eef0f6;--m:#9ba2b8;--a:#ff6a23;--b:#a855f7;--c:#38bdf8;--ok:#4ade80;--plan:#fbbf24}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--t);font:16px/1.6 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+a{color:inherit}.w{max-width:1140px;margin:0 auto;padding:0 24px}
+.grad{background:linear-gradient(90deg,var(--a),var(--b),var(--c));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% auto;animation:sh 8s linear infinite}
+@keyframes sh{to{background-position:200% center}}
+nav.top{position:fixed;inset:0 0 auto;z-index:20;backdrop-filter:blur(14px);background:rgba(7,8,13,.7);border-bottom:1px solid var(--line)}
+nav.top .w{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-weight:800;letter-spacing:-.02em;display:flex;gap:10px;align-items:center}.logo i{width:22px;height:22px;border-radius:7px;background:conic-gradient(from 0deg,var(--a),var(--b),var(--c),var(--a));animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.links a{color:var(--m);text-decoration:none;font-size:14px;margin-left:22px}.links a:hover{color:var(--t)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border-radius:999px;font-weight:700;text-decoration:none;border:1px solid var(--line);transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.pri{background:linear-gradient(90deg,var(--a),var(--b));color:#fff;border:0;box-shadow:0 10px 40px -10px rgba(255,106,35,.6)}
+.btn.sm{padding:9px 16px;font-size:14px}
+.btn.wa{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.35);color:#bbf7d0}
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:120px 0 80px;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45;animation:float 14s ease-in-out infinite}
+.o1{width:520px;height:520px;background:var(--a);top:-140px;left:-120px}.o2{width:460px;height:460px;background:var(--b);top:120px;right:-140px;animation-delay:-5s}.o3{width:380px;height:380px;background:var(--c);bottom:-180px;left:35%;animation-delay:-9s;opacity:.3}
+@keyframes float{50%{transform:translate(40px,30px) scale(1.08)}}
+.gridbg{position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 75%)}
+.hero .w{position:relative}.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:160px;background:linear-gradient(transparent,var(--bg));pointer-events:none}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:13px;color:var(--m)}
+.pill b{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(74,222,128,.7);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 10px rgba(74,222,128,0)}100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}}
+h1{font-size:clamp(40px,7.2vw,88px);line-height:1.02;letter-spacing:-.045em;margin:22px 0 22px;font-weight:850}
+.sub{font-size:clamp(17px,2vw,21px);color:var(--m);max-width:720px}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:34px}
+/* pipeline visual */
+.rail{margin-top:64px;position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.rail::before{content:"";position:absolute;left:4%;right:4%;top:34px;height:2px;background:linear-gradient(90deg,var(--a),var(--b),var(--c));opacity:.35}
+.rail::after{content:"";position:absolute;top:30px;left:4%;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 18px 6px var(--b);animation:run 5s cubic-bezier(.6,0,.4,1) infinite}
+@keyframes run{0%{left:4%;opacity:0}8%{opacity:1}92%{opacity:1}100%{left:95%;opacity:0}}
+.node{position:relative;text-align:center}
+.node .dot{width:68px;height:68px;margin:0 auto 12px;border-radius:20px;display:grid;place-items:center;background:var(--p2);border:1px solid var(--line);font-size:26px;position:relative;z-index:1;animation:glow 5s infinite}
+.node:nth-child(2) .dot{animation-delay:1s}.node:nth-child(3) .dot{animation-delay:2s}.node:nth-child(4) .dot{animation-delay:3s}.node:nth-child(5) .dot{animation-delay:4s}
+@keyframes glow{0%,20%{border-color:var(--line);box-shadow:none}8%{border-color:var(--b);box-shadow:0 0 30px -4px var(--b)}}
+.node b{display:block;font-size:15px}.node small{color:var(--m);font-size:12.5px;display:block;line-height:1.4}
+.gate{display:inline-block;margin-top:6px;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fecaca;background:rgba(244,63,94,.12);border:1px solid rgba(244,63,94,.35);padding:2px 8px;border-radius:999px}
+section{padding:110px 0;position:relative}
+.eyebrow{font-size:12.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--a);margin-bottom:12px}
+h2{font-size:clamp(32px,4.6vw,56px);line-height:1.05;letter-spacing:-.035em;margin:0 0 18px;font-weight:820}
+.lead{color:var(--m);font-size:clamp(16px,1.8vw,19px);max-width:760px}
+.tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;vertical-align:middle}
+.live{color:#bbf7d0;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.35)}.plan{color:#fde68a;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35)}
+.big{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px}
+.num{padding:28px 24px;border-radius:22px;background:linear-gradient(160deg,var(--p2),var(--p));border:1px solid var(--line);position:relative;overflow:hidden}
+.num::after{content:"";position:absolute;inset:auto -40% -60% auto;width:180px;height:180px;background:radial-gradient(var(--b),transparent 70%);opacity:.25}
+.num b{display:block;font-size:clamp(44px,5vw,64px);line-height:1;letter-spacing:-.04em;font-weight:850}
+.num span{color:var(--m);font-size:14px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.card{padding:26px;border-radius:20px;background:var(--p);border:1px solid var(--line);transition:border-color .3s,transform .3s}
+.card:hover{border-color:rgba(168,85,247,.45);transform:translateY(-3px)}
+.card h3{margin:10px 0 6px;font-size:18.5px;letter-spacing:-.01em}.card p{margin:0;color:var(--m);font-size:15px}
+.ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:19px;background:linear-gradient(135deg,rgba(255,106,35,.18),rgba(168,85,247,.18));border:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.chips span{font-size:13px;padding:6px 12px;border-radius:999px;background:var(--p2);border:1px solid var(--line);color:#d6d9e6}
+.map{margin-top:40px;border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.row{display:grid;grid-template-columns:1fr 1.5fr;border-top:1px solid var(--line)}.row:first-child{border-top:0}
+.row>div{padding:20px 24px}.row>div:first-child{background:var(--p2);font-weight:700}.row>div:last-child{color:var(--m)}
+.row.h>div{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--m);font-weight:800;background:var(--p)}
+.band{margin:0 auto;max-width:1140px;padding:56px 40px;border-radius:30px;background:linear-gradient(120deg,rgba(255,106,35,.18),rgba(168,85,247,.18) 50%,rgba(56,189,248,.14));border:1px solid var(--line);text-align:center;position:relative;overflow:hidden}
+.band h2{font-size:clamp(28px,4vw,46px)}.band .cta{justify-content:center}
+.ver{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
+.v{padding:30px;border-radius:22px;border:1px solid var(--line);background:var(--p);position:relative}
+.v .k{font-size:54px;font-weight:850;letter-spacing:-.05em;line-height:1}
+.v.v3{background:linear-gradient(160deg,rgba(168,85,247,.16),var(--p) 60%);border-color:rgba(168,85,247,.4)}
+.v ul{padding-left:18px;color:var(--m);font-size:14.5px;margin:12px 0 0}.v li{margin:5px 0}
+.phase{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:30px}
+.ph{padding:16px;border-radius:16px;background:var(--p);border:1px solid var(--line);font-size:13.5px}
+.ph b{display:block;font-size:22px;color:var(--plan)}.ph em{display:block;font-style:normal;color:var(--m);margin-top:6px;font-size:12.5px}
+.honest{margin-top:22px;padding:18px 22px;border-radius:16px;border:1px dashed rgba(251,191,36,.4);color:var(--m);font-size:15px;background:rgba(251,191,36,.04)}
+.about{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center}
+.lk{display:grid;gap:12px}.lk a{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-radius:16px;background:var(--p);border:1px solid var(--line);text-decoration:none;transition:border-color .2s}.lk a:hover{border-color:var(--a)}
+.lk small{color:var(--m)}
+footer{padding:40px 0 60px;color:var(--m);font-size:13.5px;border-top:1px solid var(--line)}
+.reveal{animation:up .9s cubic-bezier(.2,.7,.2,1) both}.d1{animation-delay:.1s}.d2{animation-delay:.25s}.d3{animation-delay:.4s}.d4{animation-delay:.6s}
+@keyframes up{from{opacity:0;transform:translateY(24px)}}
+@media(max-width:960px){.big{grid-template-columns:1fr 1fr}.cards,.ver{grid-template-columns:1fr 1fr}.phase{grid-template-columns:repeat(4,1fr)}.about{grid-template-columns:1fr}.links a:not(.btn){display:none}}
+@media(max-width:620px){section{padding:76px 0}.cards,.ver{grid-template-columns:1fr}.phase{grid-template-columns:1fr 1fr}
+.rail{grid-template-columns:1fr;gap:10px;margin-top:44px}.rail::before{left:33px;right:auto;top:10px;bottom:10px;width:2px;height:auto;background:linear-gradient(var(--a),var(--b),var(--c))}.rail::after{display:none}
+.node{display:grid;grid-template-columns:68px 1fr;gap:14px;text-align:left;align-items:center}.node .dot{margin:0}
+.row{grid-template-columns:1fr}.logo{font-size:14px;white-space:nowrap}.links .btn.sm{white-space:nowrap;padding:8px 12px;font-size:13px}.band{padding:40px 22px;border-radius:24px;margin:0 16px}.hero{min-height:auto;padding:110px 0 60px}.big{gap:10px}.num{padding:20px 16px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head><body>
+<nav class="top"><div class="w"><div class="logo"><i></i>Video Production Engine</div>
+<div class="links"><a href="#proof">Proof</a><a href="#fit">Fit for Elva</a><a href="#qa">Quality</a><a href="#v3">Version 3</a><a href="#about">About</a><a class="btn sm pri" style="white-space:nowrap" href="mailto:info@johnnybodegas.com?subject=Live%20demo%20request%3A%20Video%20Production%20Engine&amp;body=Hi%20Johnny%2C%20I%27d%20like%20to%20book%20a%20live%20demo%20of%20one%20of%20your%20pipelines.">Book a demo</a></div></div></nav>
+
+<header class="hero"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="gridbg"></div>
+<div class="w">
+<span class="pill reveal"><b></b>Running today · built and operated by Johnny Bodegas</span>
+<h1 class="reveal d1">An idea goes in.<br><span class="grad">A finished, checked video</span><br>comes out.</h1>
+<p class="sub reveal d2">I built a working AI video engine where agents write and direct, code handles timing and quality, and a person approves instead of editing. That's the system Elva is hiring for, and I've already shipped one.</p>
+<div class="cta reveal d3"><a class="btn pri" href="mailto:info@johnnybodegas.com?subject=Live%20demo%20request%3A%20Video%20Production%20Engine&amp;body=Hi%20Johnny%2C%20I%27d%20like%20to%20book%20a%20live%20demo%20of%20one%20of%20your%20pipelines.">Book a live demo of one of my pipelines →</a><a class="btn wa" href="https://wa.me/639081875826?text=Hi%20Johnny%2C%20I%27d%20like%20to%20book%20a%20live%20demo%20of%20one%20of%20your%20pipelines.">WhatsApp me</a><a class="btn" href="https://videoproductionengine.johnnybodegas.com">See the live engine</a></div>
+<div class="rail reveal d4">
+<div class="node"><div class="dot">✍️</div><div><b>Intake</b><small>Brief, source page, brand colours, pictures</small><span class="gate">Human gate</span></div></div>
+<div class="node"><div class="dot">🧠</div><div><b>Script agent</b><small>Beats in a chosen framework, unbacked claims flagged</small><span class="gate">Human gate</span></div></div>
+<div class="node"><div class="dot">🎙️</div><div><b>Voice</b><small>Measured word by word; it sets the clock</small><span class="gate">Human gate</span></div></div>
+<div class="node"><div class="dot">🎬</div><div><b>Director agent</b><small>Picks templates, places each picture on its line</small><span class="gate">Human gate</span></div></div>
+<div class="node"><div class="dot">✅</div><div><b>Checks + render</b><small>21 rules, then the final film and a quality report</small><span class="gate">Human gate</span></div></div>
+</div></div></header>
+
+<section id="proof"><div class="w">
+<div class="eyebrow">Proof first</div>
+<h2>Not a prototype. <span class="grad">A working engine.</span></h2>
+<p class="lead">Every item in this section is in the working code today. I checked each one against the source before writing this page.</p>
+<div class="big">
+<div class="num"><b class="grad">661</b><span>automated tests passing</span></div>
+<div class="num"><b class="grad">21</b><span>quality rules run before any person reviews</span></div>
+<div class="num"><b class="grad">21</b><span>scene templates the director chooses from</span></div>
+<div class="num"><b class="grad">8</b><span>pre-release checks, incl. a 6,000-frame endurance render</span></div>
+</div>
+<div class="cards" style="margin-top:16px">
+<div class="card"><div class="ic">👁️</div><h3>A director that sees the pictures <span class="tag live">Works today</span></h3><p>Every uploaded picture is read once by a vision model for its text and a one-line description. The director places the invoice screen on the line about invoices, not in upload order.</p></div>
+<div class="card"><div class="ic">⏱️</div><h3>Word-timed cards <span class="tag live">Works today</span></h3><p>Each on-screen card is anchored to the moment its word is actually spoken, measured from the voice. Re-record the voice and the cards re-time themselves.</p></div>
+<div class="card"><div class="ic">🎨</div><h3>Versioned house style <span class="tag live">Works today</span></h3><p>Templates, thresholds, voices, palettes and sound effects are versioned records. A new style is a new version, not a new editor.</p></div>
+<div class="card"><div class="ic">🔗</div><h3>Only what changed goes stale <span class="tag live">Works today</span></h3><p>Approvals are tied to the exact inputs. Edit one line upstream and only the pieces that depend on it lose their approval.</p></div>
+<div class="card"><div class="ic">🌐</div><h3>Briefs grounded in real sources <span class="tag live">Works today</span></h3><p>Paste a URL: the page becomes a dated snapshot of facts, and the brand palette is read from the site's own stylesheets for a person to confirm.</p></div>
+<div class="card"><div class="ic">🛟</div><h3>One missing asset never kills a film <span class="tag live">Works today</span></h3><p>A missing or failed picture renders as a clean fallback card. A model that ignores a rule is asked again, then the rule is applied for it.</p></div>
+</div>
+<div class="cards">
+<div class="card"><h3>Script frameworks</h3><div class="chips"><span>Problem–Agitate–Solve</span><span>AIDA</span><span>Contrarian value-first</span><span>SPARK</span><span>The Sequence</span></div></div>
+<div class="card"><h3>Video types</h3><div class="chips"><span>Reel · 5–90 s</span><span>Short · 5–180 s</span><span>VSL · 181–1,200 s</span><span>16:9</span><span>9:16</span></div></div>
+<div class="card"><h3>Script source</h3><div class="chips"><span>Agent writes it</span><span>Bring your own script</span><span>Two-voice scripts</span></div></div>
+</div>
+</div></section>
+
+<div class="band"><h2>See it run, live, on a real brief.</h2><p class="lead" style="margin:0 auto">One film through every gate in about six minutes, including a rule failing on purpose and an approval going stale.</p>
+<div class="cta"><a class="btn pri" href="mailto:info@johnnybodegas.com?subject=Live%20demo%20request%3A%20Video%20Production%20Engine&amp;body=Hi%20Johnny%2C%20I%27d%20like%20to%20book%20a%20live%20demo%20of%20one%20of%20your%20pipelines.">Book a live demo of one of my pipelines →</a><a class="btn wa" href="https://wa.me/639081875826?text=Hi%20Johnny%2C%20I%27d%20like%20to%20book%20a%20live%20demo%20of%20one%20of%20your%20pipelines.">WhatsApp me</a></div></div>
+
+<section id="fit"><div class="w">
+<div class="eyebrow">Fit for Elva</div>
+<h2>Your brief, <span class="grad">already in production.</span></h2>
+<p class="lead">Elva wants a system that takes an idea and references, analyses them, builds a narrative, picks visuals and audio, and outputs a structured video. Here's where I've already built each piece.</p>
+<div class="map">
+<div class="row h"><div>What Elva needs</div><div>What I've built</div></div>
+<div class="row"><div>Idea + references as input</div><div>An intake with topic, brief, source URL snapshot, facts, proof screenshots, pictures and logos, all in one approved brief that everything downstream reads from.</div></div>
+<div class="row"><div>Content analysis</div><div>Pages stripped to facts, brand colours read from stylesheets, and every picture read by a vision model for what it says and shows.</div></div>
+<div class="row"><div>Narrative generation</div><div>A script agent that writes beats in a chosen framework, with strict output formats, a re-ask on bad output, and flags for claims it can't back up.</div></div>
+<div class="row"><div>Editing orchestration</div><div>Scene timing cut by code from the measured voice; a director agent fills each scene from 21 templates; 21 rules check the result.</div></div>
+<div class="row"><div>Visual + audio selection</div><div>Template and picture choice per scene, opt-in image generation, voice casting, sound effects, and loudness mastering to a set target.</div></div>
+<div class="row"><div>Tool + API integration</div><div>ElevenLabs voice with word timing, image models through an AI gateway, and a second project (my studio) holding adapters for video, image, voice, music and stock-footage providers.</div></div>
+<div class="row"><div>System prompts + behavioural rules</div><div>Agent instructions, frameworks and thresholds stored as versioned data, enforced by code rather than requested in prompts.</div></div>
+<div class="row"><div>Quality + reliability</div><div>661 tests, 8 pre-release checks, repeatable renders (same inputs, same frames), and a quality report on every render.</div></div>
+</div>
+<div class="honest"><b style="color:var(--t)">How I build:</b> I build the engine as one app, so the whole pipeline lives in one place instead of hopping between separately connected tools. Today the production engine calls voice, image and video providers directly through their APIs. <span class="tag plan">Planned in v3</span> MCP function calls will let the agents it spawns oversee and review each pipeline step, and if you prefer an n8n-style or other orchestration setup, I can build that too.</div>
+</div></section>
+
+<section id="qa"><div class="w">
+<div class="eyebrow">Quality at volume</div>
+<h2>Built for 100 videos a day: <span class="grad">machines review first, a human approves last.</span></h2>
+<p class="lead">At 100 videos a day, nobody can check every card and scene by hand. So every version has to pass the machine checks before it reaches me, and I give the final verdict as the approver, not the editor.</p>
+<div class="cards">
+<div class="card"><div class="ic">🧪</div><h3>21 automatic rules <span class="tag live">Works today</span></h3><p>They run on every version of every storyboard. Any error blocks that scene's approval and the final render, and the final render checks again and refuses to start if errors remain. Six of the rules are warnings that flag work for a closer look.</p></div>
+<div class="card"><div class="ic">🚦</div><h3>8 pre-release checks <span class="tag live">Works today</span></h3><p>Free disk space, type checks on the app and the engine, the full test suite (661 tests), a scan for hard-coded off-brand colours, a repeatability check, a clean build, and a 6,000-frame endurance render.</p></div>
+<div class="card"><div class="ic">🔗</div><h3>Only what changed goes stale <span class="tag live">Works today</span></h3><p>Approvals are tied to the exact inputs. Change one line and only the pieces that depend on it need approving again; everything else keeps its sign-off.</p></div>
+</div>
+<div class="map">
+<div class="row h"><div>What the rules catch <span class="tag live">Works today</span></div><div>What counts as a fail</div></div>
+<div class="row"><div>Scenes held too long</div><div>A scene runs past the length cap for its section of the video (separate caps for short and long form)</div></div>
+<div class="row"><div>Silent or snapping motion</div><div>Something enters with no sound effect within 0.1 s, or text snaps on instead of revealing over at least 0.2 s</div></div>
+<div class="row"><div>Dead motion and missing pattern breaks</div><div>The screen sits idle for more than about a quarter of a second, or there's no pattern break every 8–12 seconds</div></div>
+<div class="row"><div>Picture out of sync with the voice</div><div>On-screen words don't match what's being said, a card isn't tied to a spoken word, or the timeline drifts more than half a second from the measured voice</div></div>
+<div class="row"><div>Off-brand or broken build</div><div>Colours hard-coded outside the house style, a missing sound file, gaps or overlaps between scenes, missing required content, picture-in-picture or picture-card rule breaks</div></div>
+<div class="row"><div>Weak spots (warnings)</div><div>Degraded voice timing, the same visual repeated three or more times, placeholder copy, too little variety in pattern breaks</div></div>
+<div class="row"><div>Sound and pacing targets</div><div>Loudness mastered to −14 LUFS (±0.5) with peaks at or below −1 dBTP; first motion within the first 0.1 s and first spoken word within 0.6 s; too much dead air (over 12% short form, 20% long form) fails</div></div>
+</div>
+<div class="honest"><b style="color:var(--t)">Next, in version 3</b> <span class="tag plan">Planned</span> Agent reviewers, including a vision review of every storyboard's contact sheet, apply their own pass criteria on top of the rules. Storyboards that pass everything are approved automatically, so I only see the flagged scenes and the final verdict.</div>
+</div></section>
+
+<section id="v3"><div class="w">
+<div class="eyebrow">Where it's going</div>
+<h2>Version 3: <span class="grad">from one engine to a factory.</span></h2>
+<p class="lead">Two working projects, combined into one system built for volume. And it adapts: every client has their own workflow, formats and approval steps, and the engine is built to be customised to the pipeline you already run.</p>
+<div class="ver">
+<div class="v"><div class="k grad">v1</div><h3>Video Production Engine <span class="tag live">Running</span></h3><ul><li>The deterministic core: timeline renderer, voice timing, 21 rules, hash-tied approvals</li><li>Kinetic-type explainers, reels and VSLs</li><li>One operator, one machine</li></ul></div>
+<div class="v"><div class="k grad">v2</div><h3>Creative Video Studio <span class="tag live">Built</span></h3><ul><li>13 video types defined, from documentary montage to talking head and clip factory</li><li>Six visual styles, well over a hundred provider adapters, cost caps per run</li><li>Already calls the engine to check and render</li></ul></div>
+<div class="v v3"><div class="k grad">v3</div><h3>The combined factory <span class="tag plan">Planned</span></h3><ul><li>Engine as the core, studio as the tool library</li><li>Agents for routing, script, direction, generation and quality review</li><li>Three human gates, storyboard reviewed only by exception</li><li>4–6 render workers; designed for up to 100 videos a day</li></ul></div>
+</div>
+<h3 style="margin:44px 0 6px;font-size:22px">Adapts to your pipeline</h3>
+<p class="lead" style="font-size:16px">The version 3 plan is a set of building blocks, not a fixed product. Each one can be shaped around your needs:</p>
+<div class="phase">
+<div class="ph"><b>0</b>Harden &amp; verify</div>
+<div class="ph"><b>1</b>Shared core for many brands</div>
+<div class="ph"><b>2</b>Agent layer</div>
+<div class="ph"><b>3</b>Generation router with spend caps</div>
+<div class="ph"><b>4</b>Quality review &amp; auto-approval</div>
+<div class="ph"><b>5</b>Scale-out rendering</div>
+<div class="ph"><b>6</b>Batch, scheduling &amp; new formats</div>
+</div>
+<div class="honest">Version 3 is a plan, not a product yet. How long a build takes depends on scope, so I don't quote a number before I've seen yours.</div>
+<div class="band" style="margin-top:36px"><h2>Send me your video pipeline brief.</h2><p class="lead" style="margin:0 auto">I'll review it and give you the exact build time, live in a demo or right after. That includes building from scratch if it doesn't fit my current engine.</p>
+<div class="cta"><a class="btn pri" href="mailto:info@johnnybodegas.com?subject=Video%20pipeline%20brief%20for%20Johnny&amp;body=Hi%20Johnny%2C%20here%27s%20my%20video%20pipeline%20brief%3A%20">Send me your video pipeline brief →</a><a class="btn wa" href="https://wa.me/639081875826?text=Hi%20Johnny%2C%20I%27d%20like%20to%20send%20you%20my%20video%20pipeline%20brief.">WhatsApp me</a></div></div>
+</div></section>
+
+<div class="band"><h2>Want to see v1 handle your kind of brief?</h2>
+<div class="cta"><a class="btn pri" href="mailto:info@johnnybodegas.com?subject=Live%20demo%20request%3A%20Video%20Production%20Engine&amp;body=Hi%20Johnny%2C%20I%27d%20like%20to%20book%20a%20live%20demo%20of%20one%20of%20your%20pipelines.">Book a live demo of one of my pipelines →</a><a class="btn wa" href="https://wa.me/639081875826?text=Hi%20Johnny%2C%20I%27d%20like%20to%20book%20a%20live%20demo%20of%20one%20of%20your%20pipelines.">WhatsApp me</a></div></div>
+
+<section id="about"><div class="w about">
+<div><div class="eyebrow">About</div><h2>Johnny <span class="grad">Bodegas</span></h2>
+<p class="lead">I design and build AI production systems end to end: the agents, the rules that keep them honest, the rendering, and the review screens. I'm based in the Philippines and work European hours.</p>
+<div class="cta"><a class="btn pri" href="mailto:info@johnnybodegas.com?subject=Live%20demo%20request%3A%20Video%20Production%20Engine&amp;body=Hi%20Johnny%2C%20I%27d%20like%20to%20book%20a%20live%20demo%20of%20one%20of%20your%20pipelines.">Book a live demo of one of my pipelines →</a><a class="btn wa" href="https://wa.me/639081875826?text=Hi%20Johnny%2C%20I%27d%20like%20to%20book%20a%20live%20demo%20of%20one%20of%20your%20pipelines.">WhatsApp +63 908 187 5826</a></div></div>
+<div class="lk">
+<a href="https://videoproductionengine.johnnybodegas.com"><span><b>Video Production Engine</b><br><small>The live engine</small></span>→</a>
+<a href="https://portfolio.johnnybodegas.com"><span><b>Portfolio</b><br><small>portfolio.johnnybodegas.com</small></span>→</a>
+<a href="https://johnnybodegas.com"><span><b>Hub</b><br><small>johnnybodegas.com</small></span>→</a>
+<a href="mailto:info@johnnybodegas.com"><span><b>Email</b><br><small>info@johnnybodegas.com</small></span>→</a>
+</div></div></section>
+<footer><div class="w">© 2026 Johnny Bodegas · Everything marked "Works today" was checked against the working code on 7 Oct 2026. Version 3 is a plan; build time depends on scope.</div></footer>
+</body></html>
