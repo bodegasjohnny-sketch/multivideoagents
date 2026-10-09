@@ -146,13 +146,13 @@ footer{padding:40px 0 60px;color:var(--m);font-size:13.5px;border-top:1px solid 
 <div class="row"><div>System prompts + behavioural rules</div><div>Agent instructions, frameworks and thresholds stored as versioned data, enforced by code rather than requested in prompts.</div></div>
 <div class="row"><div>Quality + reliability</div><div>661 tests, 8 pre-release checks, repeatable renders (same inputs, same frames), and a quality report on every render.</div></div>
 </div>
-<div class="honest"><b style="color:var(--t)">How I build:</b> I build the engine as one app, so the whole pipeline lives in one place instead of hopping between separately connected tools. Today the production engine calls voice, image and video providers directly through their APIs. <span class="tag plan">Planned in v3</span> MCP function calls will let the agents it spawns oversee and review each pipeline step, and if you prefer an n8n-style or other orchestration setup, I can build that too.</div>
+<div class="honest"><b style="color:var(--t)">How I build:</b> I build the engine as one app, so the whole pipeline lives in one place instead of hopping between separately connected tools. Today the production engine calls voice directly through its API, and images directly through one of its two image providers; video providers are planned. <span class="tag plan">Planned in v3</span> MCP function calls will let the agents it spawns oversee and review each pipeline step, and if you prefer an n8n-style or other orchestration setup, I can build that too.</div>
 </div></section>
 
 <section id="qa"><div class="w">
 <div class="eyebrow">Quality at volume</div>
-<h2>Built for 100 videos a day: <span class="grad">machines review first, a human approves last.</span></h2>
-<p class="lead">At 100 videos a day, nobody can check every card and scene by hand. So every version has to pass the machine checks before it reaches me, and I give the final verdict as the approver, not the editor.</p>
+<h2>Designed for up to 100 videos a day: <span class="grad">machines review first, a human approves last.</span></h2>
+<p class="lead">At up to 100 videos a day, nobody can check every card and scene by hand. So every version has to pass the machine checks before it reaches me, and I give the final verdict as the approver, not the editor.</p>
 <div class="cards">
 <div class="card"><div class="ic">🧪</div><h3>21 automatic rules <span class="tag live">Works today</span></h3><p>They run on every version of every storyboard. Any error blocks that scene's approval and the final render, and the final render checks again and refuses to start if errors remain. Six of the rules are warnings that flag work for a closer look.</p></div>
 <div class="card"><div class="ic">🚦</div><h3>8 pre-release checks <span class="tag live">Works today</span></h3><p>Free disk space, type checks on the app and the engine, the full test suite (661 tests), a scan for hard-coded off-brand colours, a repeatability check, a clean build, and a 6,000-frame endurance render.</p></div>
@@ -168,17 +168,17 @@ footer{padding:40px 0 60px;color:var(--m);font-size:13.5px;border-top:1px solid 
 <div class="row"><div>Weak spots (warnings)</div><div>Degraded voice timing, the same visual repeated three or more times, placeholder copy, too little variety in pattern breaks</div></div>
 <div class="row"><div>Sound and pacing targets</div><div>Loudness mastered to −14 LUFS (±0.5) with peaks at or below −1 dBTP; first motion within the first 0.1 s and first spoken word within 0.6 s; too much dead air (over 12% short form, 20% long form) fails</div></div>
 </div>
-<div class="honest"><b style="color:var(--t)">Next, in version 3</b> <span class="tag plan">Planned</span> Agent reviewers, including a vision review of every storyboard's contact sheet, apply their own pass criteria on top of the rules. Storyboards that pass everything are approved automatically, so I only see the flagged scenes and the final verdict.</div>
+<div class="honest"><b style="color:var(--t)">Next, in version 3</b> <span class="tag plan">Planned</span> Agent reviewers, including a vision review of every storyboard's contact sheet, apply their own pass criteria on top of the rules. Storyboards that pass everything reach the Storyboard gate pre-checked, so my review focuses on the flagged scenes and the final verdict.</div>
 </div></section>
 
 <section id="v3"><div class="w">
 <div class="eyebrow">Where it's going</div>
-<h2>Version 3: <span class="grad">from one engine to a factory.</span></h2>
+<h2>Version 3: <span class="grad">from one engine to a full pipeline.</span></h2>
 <p class="lead">Two working projects, combined into one system built for volume. And it adapts: every client has their own workflow, formats and approval steps, and the engine is built to be customised to the pipeline you already run.</p>
 <div class="ver">
 <div class="v"><div class="k grad">v1</div><h3>Video Production Engine <span class="tag live">Running</span></h3><ul><li>The deterministic core: timeline renderer, voice timing, 21 rules, hash-tied approvals</li><li>Kinetic-type explainers, reels and VSLs</li><li>One operator, one machine</li></ul></div>
-<div class="v"><div class="k grad">v2</div><h3>Creative Video Studio <span class="tag live">Built</span></h3><ul><li>13 video types defined, from documentary montage to talking head and clip factory</li><li>Six visual styles, well over a hundred provider adapters, cost caps per run</li><li>Already calls the engine to check and render</li></ul></div>
-<div class="v v3"><div class="k grad">v3</div><h3>The combined factory <span class="tag plan">Planned</span></h3><ul><li>Engine as the core, studio as the tool library</li><li>Agents for routing, script, direction, generation and quality review</li><li>Three human gates, storyboard reviewed only by exception</li><li>4–6 render workers; designed for up to 100 videos a day</li></ul></div>
+<div class="v"><div class="k grad">v2</div><h3>Creative Video Studio <span class="tag live">Built</span></h3><ul><li>13 video types defined, from documentary montage to talking head and clip compilations</li><li>Six visual styles, about 130 tools, cost caps per run</li><li>Already calls the engine to check and render</li></ul></div>
+<div class="v v3"><div class="k grad">v3</div><h3>The combined engine <span class="tag plan">Planned</span></h3><ul><li>Engine as the core, studio as the tool library</li><li>Agents for routing, script, direction, generation and quality review</li><li>Five approval gates, one per step: Intake, Script, Voice, Storyboard, Master</li><li>Designed for up to 100 videos a day</li></ul></div>
 </div>
 <h3 style="margin:44px 0 6px;font-size:22px">Adapts to your pipeline</h3>
 <p class="lead" style="font-size:16px">The version 3 plan is a set of building blocks, not a fixed product. Each one can be shaped around your needs:</p>
